@@ -125,7 +125,6 @@ public class DragFrameLayout extends FrameLayout {
     public class CircleOutlineProvider extends ViewOutlineProvider {
         @Override
         public void getOutline(View view, Outline outline) {
-            //(int)mDragHelper.convertDpToPixel(30)
             outline.setOval(0, 0, view.getWidth(), view.getHeight());
         }
     }

@@ -15,8 +15,12 @@ import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.animation.Interpolator;
 
+import com.example.android.common.utils.ActivityUtils;
+
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import static com.example.android.common.utils.ActivityUtils.convertDpToPixel;
 
 /**
  * MyViewDragHelper is a utility class for writing custom ViewGroups. It offers a number
@@ -350,8 +354,6 @@ public class MyViewDragHelper {
         return helper;
     }
 
-    DisplayMetrics mDisplayMetrics;
-
     /**
      * Apps should use MyViewDragHelper.create() to get a new instance.
      * This will allow VDH to use internal compatibility implementations for different
@@ -373,9 +375,10 @@ public class MyViewDragHelper {
 
         final ViewConfiguration vc = ViewConfiguration.get(context);
 
-        mDisplayMetrics = context.getResources().getDisplayMetrics();
+        DisplayMetrics disp = context.getResources().getDisplayMetrics();
+        ActivityUtils.initDisplayMetrics(disp);
 
-        final float density = mDisplayMetrics.density;
+        final float density = disp.density;
 
         mEdgeSize = (int) (EDGE_SIZE * density + 0.5f);
 
@@ -1470,30 +1473,6 @@ public class MyViewDragHelper {
             }
         }
         return null;
-    }
-
-    /**
-     * This method converts dp unit to equivalent pixels, depending on device density.
-     *
-     * @param dp A value in dp (density independent pixels) unit. Which we need to convert into pixels
-     * @param context Context to get resources and device specific display metrics
-     * @return A float value to represent px equivalent to dp depending on device density
-     */
-    public float convertDpToPixel(float dp){
-        float px = dp * (mDisplayMetrics.densityDpi / 160f);
-        return px;
-    }
-
-    /**
-     * This method converts device specific pixels to density independent pixels.
-     *
-     * @param px A value in px (pixels) unit. Which we need to convert into db
-     * @param context Context to get resources and device specific display metrics
-     * @return A float value to represent dp equivalent to px value
-     */
-    public float convertPixelsToDp(float px){
-        float dp = px / (mDisplayMetrics.densityDpi / 160f);
-        return dp;
     }
 
     private int getEdgesTouched(int x, int y) {
