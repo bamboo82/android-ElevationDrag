@@ -21,6 +21,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ViewAnimator;
 
 import com.example.android.common.activities.SampleActivityBase;
@@ -78,6 +79,7 @@ public class MainActivity extends SampleActivityBase {
                 mLogShown = !mLogShown;
                 ViewAnimator output = (ViewAnimator) findViewById(R.id.sample_output);
                 if (mLogShown) {
+                    output.setVisibility(View.VISIBLE);
                     output.setDisplayedChild(1);
                 } else {
                     output.setDisplayedChild(0);

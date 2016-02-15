@@ -43,41 +43,36 @@ public class ElevationDragFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mOutlineProviderCircle = new CircleOutlineProvider();
-
+        //mOutlineProviderCircle = new CircleOutlineProvider();
         mElevationStep = getResources().getDimensionPixelSize(R.dimen.elevation_step);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.ztranslation, container, false);
+                             Bundle savedInstanceState) {
+
+        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.ztranslation, container, false);
+
 
         /* Find the {@link View} to apply z-translation to. */
-        final View floatingShape = rootView.findViewById(R.id.circle);
+        //final View floatingShape = rootView.findViewById(R.id.marker);
 
-        /* Define the shape of the {@link View}'s shadow by setting one of the {@link Outline}s. */
-        floatingShape.setOutlineProvider(mOutlineProviderCircle);
+        final View floatingShape = inflater.inflate(R.layout.marker, container, false);
+        createMarker(rootView, floatingShape);
 
-        /* Clip the {@link View} with its outline. */
-        floatingShape.setClipToOutline(true);
+        final View floatingShape2 = inflater.inflate(R.layout.marker2, container, false);
+        createMarker(rootView, floatingShape2);
+
+        final View floatingShape3 = inflater.inflate(R.layout.marker3, container, false);
+        createMarker(rootView, floatingShape3);
+
+        final View floatingShape4 = inflater.inflate(R.layout.marker4, container, false);
+        createMarker(rootView, floatingShape4);
 
         DragFrameLayout dragLayout = ((DragFrameLayout) rootView.findViewById(R.id.main_layout));
+        Paper paper = ((Paper) rootView.findViewById(R.id.paper));
+        paper.views = dragLayout.mDragViews;
 
-        dragLayout.setDragFrameController(new DragFrameLayout.DragFrameLayoutController() {
-
-            @Override
-            public void onDragDrop(boolean captured) {
-                /* Animate the translation of the {@link View}. Note that the translation
-                 is being modified, not the elevation. */
-                floatingShape.animate()
-                        .translationZ(captured ? 50 : 0)
-                        .setDuration(100);
-                Log.d(TAG, captured ? "Drag" : "Drop");
-            }
-        });
-
-        dragLayout.addDragView(floatingShape);
 
         /* Raise the circle in z when the "z+" button is clicked. */
         rootView.findViewById(R.id.raise_bt).setOnClickListener(new View.OnClickListener() {
@@ -106,14 +101,48 @@ public class ElevationDragFragment extends Fragment {
         return rootView;
     }
 
-    /**
-     * ViewOutlineProvider which sets the outline to be an oval which fits the view bounds.
-     */
-    private class CircleOutlineProvider extends ViewOutlineProvider {
-        @Override
-        public void getOutline(View view, Outline outline) {
-            outline.setOval(0, 0, view.getWidth(), view.getHeight());
-        }
-    }
+    private void createMarker(ViewGroup rootView, final View floatingShape) {
 
+        //final ViewGroup marker_bag = (ViewGroup)rootView.findViewById(R.id.marker_bag);
+
+        rootView.addView(floatingShape, 1);
+        //final View floatingShape = rootView.findViewById(R.id.circle);
+
+        final DragFrameLayout dragLayout = ((DragFrameLayout) rootView.findViewById(R.id.main_layout));
+
+        mOutlineProviderCircle = dragLayout.getCircleOutlineProvider();
+
+        /* Define the shape of the {@link View}'s shadow by setting one of the {@link Outline}s. */
+        floatingShape.setOutlineProvider(mOutlineProviderCircle);
+
+        /* Clip the {@link View} with its outline. */
+        floatingShape.setClipToOutline(true);
+
+        final Paper paper = ((Paper) rootView.findViewById(R.id.paper));
+        dragLayout.setDragFrameController(new DragFrameLayout.DragFrameLayoutController() {
+
+            @Override
+            public void onDragDrop(View capturedChild, boolean captured) {
+                /* Animate the translation of the {@link View}. Note that the translation
+                 is being modified, not the elevation. */
+                for (View v : paper.views) {
+                    v.animate()
+                            .translationZ(captured ? 50 : 0)
+                            .setDuration(100);
+                    Log.d(TAG, captured ? "Drag" : "Drop");
+                }
+
+                //capturedChild.bringToFront();
+            }
+
+            @Override
+            public void onDragging(View changedView) {
+                paper.invalidate();
+
+                //changedView.bringToFront();
+            }
+        });
+
+        dragLayout.addDragView(floatingShape);
+    }
 }

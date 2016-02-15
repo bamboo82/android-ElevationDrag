@@ -17,10 +17,13 @@
 package com.example.android.elevationdrag;
 
 import android.content.Context;
+import android.graphics.Outline;
 import android.support.v4.widget.ViewDragHelper;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewOutlineProvider;
 import android.widget.FrameLayout;
 
 import java.util.ArrayList;
@@ -34,14 +37,14 @@ public class DragFrameLayout extends FrameLayout {
     /**
      * The list of {@link View}s that will be draggable.
      */
-    private List<View> mDragViews;
+    public ArrayList<View> mDragViews;
 
     /**
      * The {@link DragFrameLayoutController} that will be notify on drag.
      */
     private DragFrameLayoutController mDragFrameLayoutController;
 
-    private ViewDragHelper mDragHelper;
+    private MyViewDragHelper mDragHelper;
 
     public DragFrameLayout(Context context) {
         this(context, null, 0, 0);
@@ -62,7 +65,7 @@ public class DragFrameLayout extends FrameLayout {
         /**
          * Create the {@link ViewDragHelper} and set its callback.
          */
-        mDragHelper = ViewDragHelper.create(this, 1.0f, new ViewDragHelper.Callback() {
+        mDragHelper = MyViewDragHelper.create(this, 10.0f, new MyViewDragHelper.Callback() {
             @Override
             public boolean tryCaptureView(View child, int pointerId) {
                 return mDragViews.contains(child);
@@ -71,6 +74,10 @@ public class DragFrameLayout extends FrameLayout {
             @Override
             public void onViewPositionChanged(View changedView, int left, int top, int dx, int dy) {
                 super.onViewPositionChanged(changedView, left, top, dx, dy);
+
+                if (mDragFrameLayoutController != null) {
+                    mDragFrameLayoutController.onDragging(changedView);
+                }
             }
 
             @Override
@@ -87,7 +94,7 @@ public class DragFrameLayout extends FrameLayout {
             public void onViewCaptured(View capturedChild, int activePointerId) {
                 super.onViewCaptured(capturedChild, activePointerId);
                 if (mDragFrameLayoutController != null) {
-                    mDragFrameLayoutController.onDragDrop(true);
+                    mDragFrameLayoutController.onDragDrop(capturedChild, true);
                 }
             }
 
@@ -95,14 +102,37 @@ public class DragFrameLayout extends FrameLayout {
             public void onViewReleased(View releasedChild, float xvel, float yvel) {
                 super.onViewReleased(releasedChild, xvel, yvel);
                 if (mDragFrameLayoutController != null) {
-                    mDragFrameLayoutController.onDragDrop(false);
+                    mDragFrameLayoutController.onDragDrop(releasedChild, false);
                 }
             }
         });
     }
 
+    private CircleOutlineProvider mCircleOutlineProviderInstance = null;
+
+    public CircleOutlineProvider getCircleOutlineProvider() {
+        if (mCircleOutlineProviderInstance == null)
+        {
+            mCircleOutlineProviderInstance = new CircleOutlineProvider();
+        }
+
+        return mCircleOutlineProviderInstance;
+    }
+
+    /**
+     * ViewOutlineProvider which sets the outline to be an oval which fits the view bounds.
+     */
+    public class CircleOutlineProvider extends ViewOutlineProvider {
+        @Override
+        public void getOutline(View view, Outline outline) {
+            //(int)mDragHelper.convertDpToPixel(30)
+            outline.setOval(0, 0, view.getWidth(), view.getHeight());
+        }
+    }
+
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
+        Log.i("DragFrameLayout", "onInterceptTouchEvent");
         final int action = ev.getActionMasked();
         if (action == MotionEvent.ACTION_CANCEL || action == MotionEvent.ACTION_UP) {
             mDragHelper.cancel();
@@ -138,6 +168,8 @@ public class DragFrameLayout extends FrameLayout {
      */
     public interface DragFrameLayoutController {
 
-        public void onDragDrop(boolean captured);
+        public void onDragDrop(View capturedChild, boolean captured);
+
+        public void onDragging(View changedView);
     }
 }

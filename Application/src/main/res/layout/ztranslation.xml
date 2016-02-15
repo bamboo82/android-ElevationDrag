@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
  Copyright 2014 The Android Open Source Project
 
  Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,39 +13,71 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 -->
-<com.example.android.elevationdrag.DragFrameLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/main_layout"
+<com.example.android.elevationdrag.DragFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+
+
+    <!--<FrameLayout-->
+        <!--android:id="@+id/frame"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent">-->
+
+        <!--<View-->
+            <!--android:id="@+id/paper"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"></View>-->
+
+        <!--<FrameLayout-->
+            <!--android:id="@+id/marker_bag"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"></FrameLayout>-->
+
+    <!--</FrameLayout>-->
+    <!--<View-->
+    <!--android:id="@+id/circle"-->
+    <!--android:layout_width="@dimen/shape_size"-->
+    <!--android:layout_height="@dimen/shape_size"-->
+    <!--android:layout_gravity="center"-->
+    <!--android:background="@color/color_1"-->
+    <!--android:visibility="invisible"></View>-->
+
+
+    <com.example.android.elevationdrag.Paper
+        android:id="@+id/paper"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".MainActivity">
 
-    <View
-            android:id="@+id/circle"
-            android:layout_width="@dimen/shape_size"
-            android:layout_height="@dimen/shape_size"
-            android:layout_gravity="center"
-            android:background="@color/color_1"/>
+        android:tag="touchThrough"
+        ></com.example.android.elevationdrag.Paper>
 
     <LinearLayout
-            android:layout_margin="16dp"
-            android:layout_width="match_parent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_margin="16dp">
+
+
+        <Button
+            android:id="@+id/raise_bt"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom">
+            android:layout_weight="0.5"
+            android:text="Z+" />
 
         <Button
-                android:id="@+id/raise_bt"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.5"
-                android:text="Z+"/>
-
-        <Button
-                android:id="@+id/lower_bt"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.5"
-                android:text="Z-"/>
+            android:id="@+id/lower_bt"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:text="Z-" />
     </LinearLayout>
+
+
+
+    <!--android:background="#AACCCCCC"-->
 </com.example.android.elevationdrag.DragFrameLayout>
